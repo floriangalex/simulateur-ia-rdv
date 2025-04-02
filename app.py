@@ -1,15 +1,15 @@
 import streamlit as st
 from openai import OpenAI
 
-# Configuration de la clé via les secrets Streamlit
+# Configuration de la clé API depuis les secrets Streamlit
 client = OpenAI(api_key=st.secrets["OPENAI_API_KEY"])
 
-# Configuration de la page
+# Configuration de la page Streamlit
 st.set_page_config(page_title="Simulateur IA - RDV Beauté", page_icon="💬")
 st.title("💬 Simulateur IA - Prise de rendez-vous beauté")
 st.caption("Teste ici les réponses de l’assistante virtuelle, comme si tu étais une cliente sur WhatsApp 🌸")
 
-# Fonction IA (GPT)
+# Fonction pour interroger l’IA
 def get_ai_response(message):
     system_prompt = (
         "Tu es l’assistante virtuelle de Léa, une prestataire beauté spécialisée dans les poses de cils. "
@@ -22,12 +22,12 @@ def get_ai_response(message):
         "- Retouche (30€, acompte 5€)\n"
         "Elle est disponible jeudi à 14h ou vendredi à 16h. "
         "Si la cliente veut réserver, propose un créneau et explique le système d’acompte. "
-        "N'envoie le lien de paiement que si elle dit 'carte' ou 'paypal'. "
+        "N’envoie le lien de paiement que si elle dit 'carte' ou 'paypal'. "
         "Ne dis jamais que tu es une IA."
     )
 
     response = client.chat.completions.create(
-        model="gpt-4-1106-preview",
+        model="gpt-3.5-turbo",
         messages=[
             {"role": "system", "content": system_prompt},
             {"role": "user", "content": message}
@@ -35,7 +35,7 @@ def get_ai_response(message):
     )
     return response.choices[0].message.content
 
-# Interface utilisateur (formulaire)
+# Interface utilisateur
 with st.form("chat_form"):
     user_message = st.text_input(
         "Message cliente (WhatsApp simulé)", 
@@ -43,7 +43,7 @@ with st.form("chat_form"):
     )
     submitted = st.form_submit_button("Envoyer")
 
-# Réponse IA affichée
+# Affichage de la réponse IA
 if submitted and user_message:
     st.markdown("**Réponse IA :**")
     with st.spinner("L'assistante répond..."):
